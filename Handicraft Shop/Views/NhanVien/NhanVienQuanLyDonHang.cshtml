@@ -1,0 +1,244 @@
+﻿@using Handicraft_Shop.Models;
+@{
+    ViewBag.Title = "NhanVienQuanLyDonHang";
+    Layout = "~/Views/Shared/NhanVienLayout.cshtml";
+}
+
+@model List<Handicraft_Shop.Models.DONHANG>
+
+@section Styles {
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            color: #333;
+        }
+
+        .container-custom {
+            max-width: 90%;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #6d4c41;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        /* Table */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .table thead {
+                background-color: #6d4c41;
+                color: white;
+            }
+
+            .table th, .table td {
+                padding: 10px;
+                text-align: center;
+                border: 1px solid #ddd;
+            }
+
+        .btn-action {
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: white;
+            font-size: 15px;
+            text-decoration: none;
+        }
+
+        .btn-info {
+            background-color: #4fc3f7;
+        }
+
+        .btn-success {
+            background-color: #81c784;
+        }
+
+        select {
+            padding: 4px 6px;
+            border-radius: 5px;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 20px;
+        }
+
+            .pagination a {
+                padding: 6px 10px;
+                background: #ddd;
+                color: #333;
+                border-radius: 5px;
+                text-decoration: none;
+            }
+
+                .pagination a.active {
+                    background-color: #6d4c41;
+                    color: white;
+                }
+
+                .filter-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-container label {
+            font-weight: bold;
+            color: #6d4c41;
+        }
+
+        .filter-container input[type="date"] {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-container input[type="date"]:focus {
+            outline: none;
+            border-color: #6d4c41;
+            box-shadow: 0 0 5px rgba(109, 76, 65, 0.3);
+        }
+
+        .btn-primary {
+            background-color: #6d4c41;
+            color: white;
+            font-weight: bold;
+            padding: 8px 15px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            
+        }
+
+        .btn-primary:hover {
+            background-color: #5d4037;
+        }
+
+        /* Responsive cho phần lọc */
+        @@media (max-width: 768px) {
+            .filter-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .filter-container input,
+            .filter-container button {
+                width: 100%;
+            }
+        }
+    </style>
+}
+
+<div class="container-custom">
+    
+    <h2>Quản Lý Đơn Hàng</h2>
+    <div class="filter-container">
+        <form action="@Url.Action("NhanVienQuanLyDonHang")" method="get" class="d-flex justify-content-center align-items-center">
+            <div>
+                <label for="startDate">Từ Ngày:</label>
+                <input type="date" id="startDate" name="startDate" class="form-control"
+                       value="@ViewBag.StartDate" />
+            </div>
+            <div>
+                <label for="endDate">Đến Ngày:</label>
+                <input type="date" id="endDate" name="endDate" class="form-control"
+                       value="@ViewBag.EndDate" />
+            </div>
+
+            <div class="align-self-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-filter"></i> Lọc
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bảng Đơn Hàng -->
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Mã Đơn Hàng</th>
+                <th>Khách Hàng</th>
+                <th>Ngày Đặt</th>
+                <th>Tổng Số Lượng</th>
+                <th>Tổng Thành Tiền</th>
+                <th>Trạng Thái</th>
+                <th>Hành Động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var donHang in Model)
+            {
+                <tr>
+                    <td>@donHang.MADONHANG</td>
+                    <td>@donHang.KHACHHANG.HOTEN</td>
+                    <td>@string.Format("{0:dd/MM/yyyy HH:mm:ss}", donHang.NGAYDAT)</td>
+                    <td>@donHang.TONGSLHANG</td>
+                    <td>@String.Format("{0:N0}", donHang.TONGTHANHTIEN) VNĐ</td>
+                    <td>@donHang.TRANGTHAI</td>
+                    <td>
+                        <a href="@Url.Action("NhanVienDonHangDetails", new { id = donHang.MADONHANG })" class="btn-action btn-info">Chi Tiết</a>
+                        @if (donHang.TRANGTHAI == "Đang xử lý")
+                        {
+                            <!-- ComboBox hiển thị Đang xử lý nhưng chọn được Đang giao -->
+                            <form action="@Url.Action("NhanVienUpdateTrangThaiDonHang", new { id = donHang.MADONHANG })" method="post" style="display:inline;">
+                                <select name="trangThaiMoi" class="form-select">
+                                    <option value="Đang xử lý" selected>Đang xử lý</option>
+                                    <option value="Đang giao">Đang giao</option>
+                                </select>
+                                <button type="submit" class="btn-action btn-success">Cập Nhật</button>
+                            </form>
+                        }
+                        else if (donHang.TRANGTHAI == "Đang giao")
+                        {
+                            <!-- ComboBox hiển thị Đang giao nhưng chọn được Đã giao -->
+                            <form action="@Url.Action("NhanVienUpdateTrangThaiDonHang", new { id = donHang.MADONHANG, page = Request.QueryString["page"], startDate = Request.QueryString["startDate"], endDate = Request.QueryString["endDate"] })" method="post" style="display:inline;">
+                                <select name="trangThaiMoi" class="form-select">
+                                    <option value="Đang giao" selected>Đang giao</option>
+                                    <option value="Đã giao">Đã giao</option>
+                                </select>
+                                <button type="submit" class="btn-action btn-success">Cập Nhật</button>
+                            </form>
+                        }
+                        else if (donHang.TRANGTHAI == "Đã giao" || donHang.TRANGTHAI == "Đã hủy")
+                        {
+
+                        }
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Phân Trang -->
+    <div class="pagination">
+        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+        {
+            <a href="@Url.Action("NhanVienQuanLyDonHang", new { page = i, startDate = Request.QueryString["startDate"], endDate = Request.QueryString["endDate"] })" class="@(i == ViewBag.CurrentPage ? "active" : "")">@i</a>
+        }
+    </div>
+</div>

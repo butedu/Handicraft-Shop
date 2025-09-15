@@ -1,0 +1,162 @@
+﻿@using Handicraft_Shop.Models;
+@{
+    ViewBag.Title = "KhachHangXemGioHang";
+    Layout = "~/Views/Shared/KhachHangLayout.cshtml";
+}
+
+<div class="container mt-5 mb-5 shadow-lg p-4 rounded">
+    <h2 class="text-center mb-4 text-uppercase font-weight-bold" style="color: #333;">Thông Tin Giỏ Hàng</h2>
+
+    <!-- Thông báo -->
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Thông báo:</strong> @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Bảng Giỏ Hàng -->
+    <table class="table table-hover text-center align-middle rounded shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Mã Sản Phẩm</th>
+                <th>Tên Sản Phẩm</th>
+                <th>Ảnh</th>
+                <th>Số Lượng</th>
+                <th>Đơn Giá</th>
+                <th>Thành Tiền</th>
+                <th>Hành Động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (CartItem item in Model.list)
+            {
+                <tr>
+                    <td class="fw-bold">@item.MaSP</td>
+                    <td>@item.TenSP</td>
+                    <td>
+                        <img src="@Url.Content("~/HinhAnhSP/MUC HINH ANH CHUNG/" + item.AnhBia)"
+                             class="product-image img-thumbnail shadow-sm" />
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-center align-items-center">
+                            @using (Html.BeginForm("KhachHangGiamMatHang", "KhachHang", FormMethod.Post, new { @class = "d-inline" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("id", item.MaSP)
+                                <button type="submit" class="btn btn-outline-danger btn-sm me-2 rounded-circle shadow-sm">-</button>
+                            }
+
+                            <span class="fw-bold" style="min-width: 30px; display: inline-block;">@item.SoLuong</span>
+
+                            @using (Html.BeginForm("KhachHangTangMatHang", "KhachHang", FormMethod.Post, new { @class = "d-inline" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("id", item.MaSP)
+                                <button type="submit" class="btn btn-outline-success btn-sm ms-2 rounded-circle shadow-sm">+</button>
+                            }
+                        </div>
+                    </td>
+                    <td class="text-success fw-bold">@String.Format("{0:#,###}", item.DonGia) VNĐ</td>
+                    <td class="text-danger fw-bold">@String.Format("{0:#,###}", item.ThanhTien) VNĐ</td>
+                    <td>
+                        <a href="@Url.Action("KhachHangDetails", "KhachHang", new { id = item.MaSP })" class="btn btn-info btn-sm me-2 shadow-sm">
+                            <i class="fas fa-info-circle"></i> Chi Tiết
+                        </a>
+                        <a href="@Url.Action("KhachHangXoaGioHang", "KhachHang", new { id = item.MaSP })" class="btn btn-danger btn-sm shadow-sm">
+                            <i class="fas fa-trash-alt"></i> Xóa
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Tổng kết giỏ hàng -->
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <h4 class="text-danger fw-bold">
+            Tổng Số Lượng: @((Session["GioHang"] as GioHang)?.TongSLHang() ?? 0)
+        </h4>
+        <h4 class="text-danger fw-bold">
+            Tổng Thành Tiền: @String.Format("{0:#,###}", (Session["GioHang"] as GioHang)?.TongThanhTien() ?? 0) VNĐ
+        </h4>
+    </div>
+
+    <!-- Nút Chức Năng -->
+    <div class="text-end mt-4">
+        <a href="@Url.Action("IndexKhachHang", "KhachHang")" class="btn btn-secondary btn-lg custom-back-btn me-3 shadow-sm">
+            <i class="fas fa-arrow-left"></i> Trở lại danh sách
+        </a>
+        <a href="@Url.Action("KhachHangDatHang", "KhachHang")" class="btn btn-success btn-lg custom-confirm-btn shadow-lg">
+            <i class="fas fa-check-circle"></i> Đặt Hàng
+        </a>
+    </div>
+</div>
+
+@section Styles {
+    <!-- CSS Tùy Chỉnh -->
+    <style>
+        /* Card và giao diện tổng thể */
+        .shadow-lg {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .table {
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            background-color: #f8f9fa;
+        }
+
+            .table thead {
+                border-radius: 8px;
+            }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .custom-back-btn, .custom-confirm-btn {
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .custom-back-btn {
+            color: #6c757d;
+            background-color: transparent;
+            border: 2px solid #6c757d;
+            transition: all 0.3s ease;
+        }
+
+            .custom-back-btn:hover {
+                background-color: #6c757d;
+                color: #fff;
+                transform: scale(1.05);
+            }
+
+        .custom-confirm-btn {
+            color: #fff;
+            background-color: #28a745;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+            .custom-confirm-btn:hover {
+                background-color: #218838;
+                transform: scale(1.05);
+            }
+
+        .btn-outline-danger, .btn-outline-success {
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            line-height: 24px;
+            text-align: center;
+        }
+    </style>
+}
+    <!-- Script (nếu cần) -->

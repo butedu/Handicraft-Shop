@@ -1,0 +1,114 @@
+﻿@model Handicraft_Shop.Models.KhachHangEditPass
+@{
+    ViewBag.Title = "KhachHangDoiMatKhau";
+    Layout = "~/Views/Shared/KhachHangLayout.cshtml";
+}
+
+@section Styles {
+    <style>
+        /* Định dạng tiêu đề */
+        .edit-profile-title {
+            font-size: 2rem;
+            color: #8B4513;
+            font-weight: bold;
+            text-align: center;
+            margin: 30px 0 20px; /* Tạo khoảng cách phía trên và dưới */
+        }
+
+        /* Định dạng form chỉnh sửa hồ sơ */
+        .edit-profile-form {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px 20px 30px; /* Giảm padding để gọn hơn */
+            max-width: 600px;
+            margin: 0 auto; /* Căn giữa form */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+            .edit-profile-form .form-group label {
+                font-weight: bold;
+                color: #8B4513;
+            }
+
+            .edit-profile-form .form-control {
+                border-radius: 5px;
+                border: 1px solid #ddd;
+                padding: 8px; /* Giảm padding để gọn hơn */
+                font-size: 1rem;
+                color: #333;
+            }
+
+        /* Định dạng nút cập nhật */
+        .update-profile-button {
+            display: block;
+            text-align: center;
+            background-color: #8B4513;
+            color: white;
+            font-weight: bold;
+            padding: 8px 16px; /* Giảm kích thước nút */
+            border-radius: 5px;
+            border: none;
+            transition: background-color 0.3s ease;
+            margin: 20px auto 0;
+            width: fit-content;
+        }
+
+            .update-profile-button:hover {
+                background-color: #a55728;
+                color: #fff;
+                text-decoration: none;
+            }
+
+        .group {
+            display: flex;
+        }
+    </style>
+}
+<h2 class="edit-profile-title">
+    <i class="fas fa-key"></i> Thay Đổi Mật Khẩu
+</h2>
+
+@using (Html.BeginForm("KhachHangDoiMatKhau", "KhachHang", FormMethod.Post, new { @class = "edit-profile-form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <label for="CurrentPassword">
+            <i class="fas fa-lock"></i> Mật Khẩu Hiện Tại
+        </label>
+        <input type="password" id="CurrentPassword" name="CurrentPassword" class="form-control" />
+        @Html.ValidationMessageFor(m => m.CurrentPassword, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <label for="NewPassword">
+            <i class="fas fa-lock-open"></i> Mật Khẩu Mới
+        </label>
+        <input type="password" id="NewPassword" name="NewPassword" class="form-control" />
+        @Html.ValidationMessageFor(m => m.NewPassword, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <label for="ConfirmPassword">
+            <i class="fas fa-check-circle"></i> Xác Nhận Mật Khẩu Mới
+        </label>
+        <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="form-control" />
+        @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="group">
+        <button type="submit" class="btn update-profile-button">
+            <i class="fas fa-save"></i> Cập Nhật
+        </button>
+        <a href="@Url.Action("KhachHangProfile", "KhachHang")" class="btn update-profile-button">
+            <i class="fas fa-arrow-left"></i> Trở Về
+        </a>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <div class="alert alert-success mt-3 text-center">
+        <i class="fas fa-check-circle"></i> @ViewBag.Message
+    </div>
+}

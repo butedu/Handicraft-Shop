@@ -1,0 +1,139 @@
+﻿@using Handicraft_Shop.Models;
+@model IEnumerable<Handicraft_Shop.Models.SANPHAM>
+@{
+    ViewBag.Title = "Trang Chủ";
+    Layout = "~/Views/Shared/KhachHangLayout.cshtml";
+}
+
+@section Styles {
+    <link href="~/bootstrap/bootstrap/css/Index.css" rel="stylesheet" />
+    <link href="~/bootstrap/bootstrap/css/Banner.css" rel="stylesheet" />
+}
+
+<script src="~/bootstrap/bootstrap/js/jquery-3.3.1.min.js"></script>
+<script src="~/bootstrap/bootstrap/js/bootstrap.bundle.min.js"></script>
+@Html.Partial("KhachHang_Banner")
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#customBannerCarousel').carousel({
+                interval: 3000,
+                ride: 'carousel'
+            });
+
+            const currentPage = @ViewBag.CurrentPage;
+            if (currentPage > 1) {
+                $('html, body').animate({
+                    scrollTop: $('#Product').offset().top
+                }, 800);
+            }
+        });
+
+        function addToCartAjaxIndex(productId) {
+            // Bước 1: Kiểm tra số lượng tồn
+            $.ajax({
+                url: '/KhachHang/KiemTraSanPhamHetHang',
+                type: 'POST',
+                data: { MASANPHAM: productId },
+                success: function (response) {
+                    if (response.success) {
+                        // Nếu còn hàng, gọi action thêm vào giỏ hàng
+                        $.ajax({
+                            url: '/KhachHang/KhachHangThemMatHangAjax',
+                            type: 'POST',
+                            data: { MASANPHAM: productId },
+                            success: function (addResponse) {
+                                if (addResponse.success) {
+                                    $('.cart-icon + .badge').text(addResponse.cartCount);
+                                    
+                                } else {
+                                    alert(addResponse.message);
+                                }
+                            },
+                            error: function () {
+                                alert("Lỗi khi thêm sản phẩm vào giỏ hàng.");
+                            }
+                        });
+                    } else {
+                        // Nếu hết hàng, hiển thị thông báo
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert("Lỗi khi kiểm tra trạng thái sản phẩm.");
+                }
+            });
+        }
+
+
+    </script>
+}
+
+<div class="container product-section" id="Product">
+    <h2 class="section-title">Danh Sách Sản Phẩm</h2>
+    <div class="row">
+        @foreach (var sp in Model)
+        {
+            <div class="col-md-3 col-sm-6 text-center mt-4 mb-4">
+                <div class="product-card">
+                    <img src="~/HinhAnhSP/MUC HINH ANH CHUNG/@sp.HINHANH" class="product-image" alt="@sp.TENSANPHAM">
+                    <h5 class="product-title">@sp.TENSANPHAM</h5>
+                    <p class="product-price">@String.Format("{0:#,###}", sp.GIABAN) VNĐ</p>
+                    <div class="button-group">
+                        <a href="/KhachHang/KhachHangDetails/@sp.MASANPHAM" class="btn btn-outline-primary">Chi Tiết</a>
+                        <a href="javascript:void(0);" onclick="addToCartAjaxIndex('@sp.MASANPHAM')" class="btn btn-success">Chọn Mua</a>
+
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Phân trang -->
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            @if (ViewBag.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("IndexKhachHang", new { page = ViewBag.CurrentPage - 1 })">Trước</a>
+                </li>
+            }
+
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("IndexKhachHang", new { page = i })">@i</a>
+                </li>
+            }
+
+            @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("IndexKhachHang", new { page = ViewBag.CurrentPage + 1 })">Sau</a>
+                </li>
+            }
+        </ul>
+    </nav>
+
+    <!-- Sản phẩm gợi ý -->
+    <div class="recommended-products mt-5">
+        <h3 class="section-title">Sản phẩm gợi ý</h3>
+        <div class="row">
+            @foreach (var item in ViewBag.RecommendedProducts as List<Handicraft_Shop.Models.SANPHAM>)
+            {
+                <div class="col-md-3 col-sm-6 text-center mt-4 mb-4">
+                    <div class="product-card">
+                        <img src="~/HinhAnhSP/MUC HINH ANH CHUNG/@item.HINHANH" class="product-image" alt="@item.TENSANPHAM">
+                        <h5 class="product-title">@item.TENSANPHAM</h5>
+                        <p class="product-price">@String.Format("{0:#,###}", item.GIABAN) VNĐ</p>
+                        <div class="button-group">
+                            <a href="/KhachHang/KhachHangDetails/@item.MASANPHAM" class="btn btn-outline-primary">Chi Tiết</a>
+                            <a href="javascript:void(0);" onclick="addToCartAjaxIndex('@item.MASANPHAM')" class="btn btn-success">Chọn Mua</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

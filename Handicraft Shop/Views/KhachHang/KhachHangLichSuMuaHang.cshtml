@@ -1,0 +1,90 @@
+﻿@{
+    ViewBag.Title = "KhachHangLichSuMuaHang";
+    Layout = "~/Views/Shared/KhachHangLayout.cshtml";
+}
+
+@model List<Handicraft_Shop.Models.DonHangViewModel>
+
+<div id="purchase-history-container" class="container shadow-lg p-4 rounded bg-white">
+    <h2 class="text-center my-4">Lịch Sử Mua Hàng</h2>
+    <table class="table table-hover table-bordered align-middle">
+        <thead class="table-dark text-center">
+            <tr>
+                <th>Mã Đơn Hàng</th>
+                <th>Ngày Đặt</th>
+                <th>Ngày Giao</th>
+                <th>Tổng Số Lượng</th>
+                <th>Tổng Thành Tiền</th>
+                <th>Trạng Thái</th>
+                <th>Thao Tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var donHang in Model)
+            {
+                <tr>
+                    <td class="fw-bold">@donHang.DonHang.MADONHANG</td>
+                    <td>@(donHang.DonHang.NGAYDAT.HasValue ? donHang.DonHang.NGAYDAT.Value.ToString("dd/MM/yyyy") : "N/A")</td>
+                    <td>@(donHang.DonHang.NGAYGIAO.HasValue ? donHang.DonHang.NGAYGIAO.Value.ToString("dd/MM/yyyy") : "Chưa giao")</td>
+                    <td class="text-success fw-bold">@donHang.DonHang.TONGSLHANG</td>
+                    <td class="text-danger fw-bold">@String.Format("{0:#,###} VNĐ", donHang.DonHang.TONGTHANHTIEN)</td>
+                    <td>
+                        <span class="badge bg-success text-white">
+                            @donHang.DonHang.TRANGTHAI
+                        </span>
+                    </td>
+                    <td>
+                        <a href="@Url.Action("KhachHangChiTietDonHang", "KhachHang", new { id = donHang.DonHang.MADONHANG })" class="btn btn-info btn-sm">
+                            <i class="fas fa-info-circle"></i> Chi Tiết
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- CSS chỉ áp dụng trong ID "purchase-history-container" -->
+<style>
+    #purchase-history-container {
+        background-color: #fff;
+        border-radius: 10px;
+    }
+
+        #purchase-history-container h2 {
+            font-size: 2rem;
+            color: #333;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        #purchase-history-container .table th,
+        #purchase-history-container .table td {
+            vertical-align: middle;
+            text-align: center;
+            padding: 15px;
+        }
+
+        #purchase-history-container .table-hover tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        #purchase-history-container .btn-sm {
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        #purchase-history-container .btn-info:hover {
+            background-color: #117a8b;
+            color: #fff;
+        }
+
+        #purchase-history-container .badge {
+            font-size: 0.9rem;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+</style>

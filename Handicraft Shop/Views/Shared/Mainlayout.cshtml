@@ -1,0 +1,189 @@
+﻿@using Handicraft_Shop.Models;
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <link href="~/bootstrap/bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <link href="~/bootstrap/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/bootstrap/bootstrap/js/jquery-3.3.1.min.js"></script>
+    <script src="~/bootstrap/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/bootstrap/bootstrap/js/bootstrap.min.js"></script>
+    <link href="~/bootstrap/bootstrap/css/Layout.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+    <title>@ViewBag.Title</title>
+    @RenderSection("Styles", required: false)
+
+    <style>
+        /* Đảm bảo layout có thể cuộn đúng */
+        html, body {
+            margin: 0;
+            margin: 0;
+            padding: 0;
+            padding-top: 30px;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden; /* Chặn cuộn ngang */
+        }
+
+        /* Cố định header ở trên cùng */
+    </style>
+</head>
+
+<body>
+    <header class="p-3">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-decoration-none">
+                    <img src="~/HinhAnhSP/LOGO/Logo.jpg" class="bi me-2" width="50" height="auto" />
+
+                </a>
+
+                <ul class="nav col-11 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li>
+                        <div class="header__nav dropdown quan-ly-nghiep-vu">
+                            <a href="javascript:;" class="nav-link px-2 dropdown-toggle"id="quanLyNghiepVuDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Danh Mục Sản phẩm
+                            </a>
+                            <div class="submenu">
+                                @Html.Action("Menuc1", "Home")
+                            </div>
+                        </div>
+                    </li>
+                    <li><a href="/Home/Index#Product" class="nav-link px-2">Danh Sách Sản Phẩm</a></li>
+                    @*<li><a href="/Home/LichSuDonHang" class="nav-link px-2 text-white">Lịch Sử Đơn Hàng</a></li>*@
+                    @*<li>
+                <div class="header__nav">
+                    <a href="javascript:;" class="nav-link px-2 text-white">
+                        Tùy Chọn
+                    </a>
+                    <div class="submenu">
+
+                        <a class="dropdown-item" href="/Home/AddItem">Thêm Sản Phẩm</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                </div>
+
+
+
+            </li>*@
+
+                </ul>
+
+                <div class="text-end">
+
+                    @if (Session["kh"] == null)
+                    {
+                        <a href="/Home/Login" class="btn butonLog me-2">Đăng Nhập</a>
+
+                    }
+                    else
+                    {
+                        <a href="/Home/Logout" class="btn btn-outline-danger me-2">Đăng Xuất</a>
+
+                        @*if (Session["kh"] != null)
+                {
+                    var kh = Session["kh"] as KhachHang;
+                    <label>Chào bạn, @kh.TenKhachHang</label>
+                }
+                else
+                {
+                    <label></label>
+                }*@
+
+                    }
+
+
+
+                </div>
+                <div class="col-md-3 d-flex justify-content-center">
+                    @using (Html.BeginForm("Search", "Home", FormMethod.Get, new { @class = "form-inline", onsubmit = "return validateSearch();" }))
+                    {
+                        <div class="form-group">
+                            <input type="text" id="searchInput" class="form-control mx-sm-3"
+                                   value="@ViewBag.SearchString" name="searchString"
+                                   placeholder="Nhập tên cần tìm"
+                                   onfocus="this.placeholder = ''" onblur="this.placeholder = 'Nhập tên cần tìm'">
+                            <button type="submit" class="btn btn-light">
+                                <img class="icon-search" src="https://salt.tikicdn.com/ts/upload/33/d0/37/6fef2e788f00a16dc7d5a1dfc5d0e97a.png" alt="icon-search" style="width:25px;height:25px;color:white">
+                            </button>
+                        </div>
+                    }
+                </div>
+
+
+
+                <a href="/Home/XemGioHang">
+                    <img class="cart-icon" src="https://salt.tikicdn.com/ts/upload/51/e2/92/8ca7e2cc5ede8c09e34d1beb50267f4f.png"
+                         alt="header_header_img_Cart" style="width:25px;height:25px;color:white;padding-left:5px">
+                    <span class="badge bg-light text-dark">@((Session["GioHang"] != null) ? ((GioHang)Session["GioHang"]).SoMatHang() : 0)</span>
+                </a>
+            </div>
+        </div>
+    </header>
+    @RenderSection("Scripts", required: false)
+    <div>
+        @RenderBody()
+    </div>
+    <footer class="footer">
+        <div class="container">
+            <div class="grid__row">
+                <div class="grid__column-2-4">
+                    <h3 class="footer__heading"><i class="fas fa-headset"></i> Chăm sóc khách hàng</h3>
+                    <ul class="footer__list">
+                        <li class="footer-item">
+                            <a href="#" class="footer-item__link"><i class="fas fa-info-circle"></i> Trung Tâm Trợ Giúp</a>
+                        </li>
+                        <li class="footer-item">
+                            <a href="#" class="footer-item__link"><i class="fas fa-envelope"></i> Handicraft Shop Mail</a>
+                        </li>
+                        <li class="footer-item">
+                            <a href="#" class="footer-item__link"><i class="fas fa-question-circle"></i> Hướng Dẫn Mua Hàng</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="grid__column-2-4">
+                    <h3 class="footer__heading"><i class="fas fa-info-circle"></i> Về Handicraft Shop</h3>
+                    <ul class="footer__list">
+                        <li class="footer-item">
+                            <a href="#" class="footer-item__link"><i class="fas fa-users"></i> Giới Thiệu</a>
+                        </li>
+                        <li class="footer-item">
+                            <a href="#" class="footer-item__link"><i class="fas fa-briefcase"></i> Tuyển Dụng</a>
+                        </li>
+                        <li class="footer-item">
+                            <a href="#" class="footer-item__link"><i class="fas fa-file-contract"></i> Điều Khoản</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="grid__column-2-4">
+                    <h3 class="footer__heading"><i class="fas fa-share-alt"></i> Theo dõi</h3>
+                    <div class="footer__social">
+                        <a href="#" class="fab fa-facebook"></a>
+                        <a href="#" class="fab fa-instagram"></a>
+                        <a href="#" class="fab fa-linkedin"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer__bottom">
+            <p>© 2024 - Bản quyền thuộc về Handicraft Shop</p>
+        </div>
+    </footer>
+    <script>
+        function validateSearch() {
+            var searchInput = document.getElementById("searchInput");
+            if (searchInput.value.trim() === "") {
+                searchInput.focus(); // Focus vào ô input nếu rỗng
+                return false; // Ngăn form gửi đi
+            }
+            return true; // Cho phép form gửi đi nếu có nội dung
+        }
+    </script>
+</body>
+</html>

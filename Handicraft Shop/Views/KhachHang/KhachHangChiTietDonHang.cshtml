@@ -1,0 +1,113 @@
+﻿@{ ViewBag.Title = "KhachHangChiTietDonHang";
+                Layout = "~/Views/Shared/KhachHangLayout.cshtml"; }
+
+@model Handicraft_Shop.Models.DonHangViewModel
+
+<h2 class="text-center my-4 text-uppercase font-weight-bold" style="color: #333;">Chi Tiết Đơn Hàng</h2>
+
+<div class="container d-flex justify-content-between flex-wrap">
+    <!-- Thông tin đơn hàng -->
+    <div class="col-md-8 mb-4">
+        <div class="order-info-card p-4 rounded shadow">
+            <h4><i class="fas fa-calendar-day"></i> Ngày Đặt: <span class="text-muted">@Model.DonHang.NGAYDAT.Value.ToString("dd/MM/yyyy")</span></h4>
+            <h4><i class="fas fa-truck"></i> Ngày Giao: <span class="text-muted">@(Model.DonHang.NGAYGIAO.HasValue ? Model.DonHang.NGAYGIAO.Value.ToString("dd/MM/yyyy") : "Chưa giao")</span></h4>
+            <h4><i class="fas fa-info-circle"></i> Trạng Thái: <span class="badge badge-info">@Model.DonHang.TRANGTHAI</span></h4>
+            <h4><i class="fas fa-box"></i> Tổng Số Lượng Hàng: <span class="text-success font-weight-bold">@Model.DonHang.TONGSLHANG</span></h4>
+            <h4>
+                <i class="fas fa-money-bill-wave"></i> Tổng Thành Tiền:
+                <span class="text-danger font-weight-bold">@String.Format("{0:#,###} VND", Model.DonHang.TONGTHANHTIEN)</span>
+            </h4>
+        </div>
+
+        <!-- Danh Sách Sản Phẩm -->
+        <h4 class="my-4 font-weight-bold" style="color: #333;">Danh Sách Sản Phẩm:</h4>
+        <table class="table table-bordered table-hover shadow-sm">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Tên Sản Phẩm</th>
+                    <th>Hình Ảnh</th>
+                    <th>Số Lượng</th>
+                    <th>Đơn Giá</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var chiTiet in Model.ChiTietSanPhams)
+                {
+    <tr>
+        <td class="align-middle">@chiTiet.TenSanPham</td>
+        <td class="text-center align-middle">
+            <img src="@Url.Content("~/HinhAnhSP/MUC HINH ANH CHUNG/" + chiTiet.HinhAnh)" class="product-image" />
+        </td>
+        <td class="align-middle">@chiTiet.SoLuong</td>
+        <td class="align-middle text-danger font-weight-bold">
+            @String.Format("{0:#,###} VND", chiTiet.DonGia)
+        </td>
+    </tr>
+}
+            </tbody>
+        </table>
+        <div class="text-center mt-4">
+            <a href="@Url.Action("KhachHangLichSuDonHang", "KhachHang")" class="btn btn-primary btn-lg shadow-sm">
+                <i class="fas fa-arrow-left"></i> Quay lại
+            </a>
+        </div>
+    </div>
+
+    <!-- Mã QR Thanh Toán -->
+    @if (Model.DonHang.MATT == "HT01" && Model.DonHang.TRANGTHAI != "Đã hủy" && Model.DonHang.TRANGTHAI != "Đã giao")
+    {
+<div class="col-md-4 text-center">
+    <div class="p-4 border rounded shadow-lg">
+        <h4 class="font-weight-bold" style="color: #28a745;">Thanh Toán Chuyển Khoản</h4>
+        <img src="@Url.Action("GeneratePaymentQRCode", "KhachHang", new { orderId = Model.DonHang.MADONHANG })"
+             alt="QR Code Thanh Toán" class="img-fluid mb-3 border rounded" style="max-width: 250px;" />
+        <p class="text-left">
+            <strong>Ngân hàng:</strong> Vietcombank<br />
+            <strong>Số tài khoản:</strong> 1051659273<br />
+            <strong>Chủ tài khoản:</strong> TRUONG DOAN<br />
+            <strong>Nội dung chuyển khoản:</strong> DH @Model.DonHang.MADONHANG<br />
+            <strong>Số tiền:</strong> <span class="text-danger font-weight-bold">@String.Format("{0:#,###} VND", Model.DonHang.TONGTHANHTIEN)</span>
+        </p>
+        <!-- Nút Xác Nhận Thanh Toán -->
+        <button id="confirm-payment-btn" class="btn btn-success btn-lg shadow-sm" onclick="confirmPayment(@Model.DonHang.MADONHANG)">
+            <i class="fas fa-check-circle"></i> Xác Nhận Đã Thanh Toán
+        </button>
+        <div id="confirm-payment-message" class="mt-2"></div>
+    </div>
+</div>}
+</div>
+
+<!-- CSS Tùy Chỉnh -->
+<style>
+    .order-info-card {
+        background-color: #f9f9f9;
+        border-left: 5px solid #007bff;
+    }
+
+    .product-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .btn-primary, .btn-success {
+        transition: all 0.3s ease;
+    }
+
+        .btn-primary:hover, .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+    .badge-info {
+        font-size: 0.9rem;
+        padding: 5px 10px;
+    }
+
+    /* Tạo khoảng cách khi thanh toán bị ẩn */
+    .col-md-8 {
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>

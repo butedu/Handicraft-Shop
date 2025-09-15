@@ -1,0 +1,175 @@
+﻿@model List<Handicraft_Shop.Models.KhachHangMuaNhieuNhat>
+@{
+    ViewBag.Title = "NhanVienBaoCaoKhachHang";
+    Layout = "~/Views/Shared/NhanVienLayout.cshtml";
+}
+
+@section Styles {
+    <style>
+        /* Tiêu đề báo cáo */
+        h2.text-center {
+            font-size: 24px;
+            color: #6d4c41;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        /* Bảng báo cáo khách hàng */
+        .table {
+            font-size: 16px;
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fdf7f2;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .thead-custom th {
+            background-color: #d7ccc8;
+            color: #6d4c41;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .table td, .table th {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+            vertical-align: middle;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #f8f0e3;
+        }
+
+        .table tbody tr:hover {
+            background-color: #ffe0b2;
+        }
+
+        /* Giới hạn chiều cao cho cột Chi Tiết Sản Phẩm Mua */
+        .product-list {
+            list-style: none;
+            padding: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        .product-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .product-image img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-right: 8px;
+        }
+
+        .product-info {
+            text-align: left;
+        }
+
+        .product-name {
+            font-weight: bold;
+            color: #6d4c41;
+        }
+
+        .product-quantity {
+            font-size: 0.85em;
+            color: #757575;
+        }
+
+        /* Tăng khoảng cách giữa các sản phẩm */
+        .product-item + .product-item {
+            margin-top: 8px;
+        }
+        /* Căn giữa và định dạng phần phân trang */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+            .pagination a, .pagination span {
+                color: #333;
+                padding: 8px 12px;
+                margin: 0 5px;
+                text-decoration: none;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 16px;
+            }
+
+                .pagination a:hover {
+                    background-color: #f2f2f2;
+                    color: #333;
+                }
+
+            .pagination .active {
+                background-color: #a0522d; /* Màu nâu phù hợp với giao diện */
+                color: white;
+                border: 1px solid #a0522d;
+            }
+
+    </style>
+}
+
+
+<h2 class="text-center my-4">Báo Cáo Khách Hàng Mua Nhiều Nhất</h2>
+<div class="container">
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="thead-custom">
+            <tr>
+                <th>Mã Khách Hàng</th>
+                <th>Tên Khách Hàng</th>
+                <th>Số Điện Thoại</th>
+                <th>Email</th>
+                <th>Tổng Số Lượng Mua</th>
+                <th>Chi Tiết Sản Phẩm Mua</th>
+                <th>Tổng Số Lượng Tổng Cộng</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var kh in Model)
+            {
+                <tr>
+                    <td>@kh.MaKhachHang</td>
+                    <td>@kh.TenKhachHang</td>
+                    <td>@kh.SoDienThoai</td>
+                    <td>@kh.Email</td>
+                    <td>@kh.TongSoLuongMua</td>
+                    <td>
+                        <ul class="product-list">
+                            @foreach (var sp in kh.SanPhamsDaMua)
+                            {
+                                <li class="product-item">
+                                    <div class="product-image">
+                                        <img src="~/HinhAnhSP/MUC HINH ANH CHUNG/@sp.HinhAnh" alt="@sp.TenSanPham" />
+                                    </div>
+                                    <div class="product-info">
+                                        <span class="product-name">@sp.TenSanPham</span>
+                                        <span class="product-quantity">Số lượng: @sp.SoLuongMua</span>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </td>
+                    <td>@kh.TongSoLuongTatCaSanPham</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="pagination">
+        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+        {
+            <a href="@Url.Action("NhanVienBaoCaoKhachHang", new { page = i })" class="@(ViewBag.CurrentPage == i ? "active" : "")">@i</a>
+        }
+    </div>
+
+</div>
